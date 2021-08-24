@@ -253,38 +253,34 @@ Tree delete(Tree root, Item value) {
 *	Funcție care determină cel mai apropiat strămoș comun pentru
 * două noduri având cheile value1 și value2
 */
+
+int gasit(Tree* vector, Tree node) {
+	for(int i = 0; vector[i] != NULL; i++) {
+		if(vector[i]->value == node->value)
+		return 1; 
+	}
+	return 0;
+}
+
 Tree lowestCommonAncestor(Tree root, Item value1, Item value2) {
 	// TODO 8
 	Tree node1 = find(root, value1);
 	Tree node2 = find(root, value2);
 	if(node1 == NULL) return node2->parent;
 	if(node2 == NULL) return node1->parent;
-
+	int contor = 0;
+	Tree *vector = malloc(50 * sizeof(Tree));
 	Tree iter1 = node1;
-	int* visited = calloc(250, sizeof(int));
 	while(order(iter1) != 0) {
-		if(iter1->value < 0) 
-			iter1->value = 0; // -> Am pus conditia aceasta suplimentara 
-							  // pentru ca stiu ca am un numar -8 in test1
-							  // si am acoperit cazul acela, trece testele, 
-							  // insa daca sunt mai multe numere cu minus
-							  // nu mai merge asa
-							  // -> Am gasit ceva pe net si e mult mai
-							  // putin de scris si merge
-		visited[iter1->value] = 1;
+		vector[contor++] = iter1;		
 		iter1 = iter1->parent;
 	}
 	Tree iter2 = node2;
 	while(order(iter2) != 0) {
-		if(iter2->value < 0) 
-			iter2->value = 0;
-		if(visited[iter2->value] == 1) {
-			return iter2;	
-		}
-		visited[iter2->value] = 1;
+		if(gasit(vector, iter2) == 1)
+			return iter2;
 		iter2 = iter2->parent;
 	}
-	free(visited);
 	return root;
 
 	// varinata de pe net
